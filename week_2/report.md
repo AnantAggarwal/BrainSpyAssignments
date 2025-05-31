@@ -49,8 +49,11 @@ I created slice views from all three anatomical planes:
 
 Each plot was labeled and rendered using `matplotlib`. Here's an example:
 
-![Axial Screenshot](axial_view.png)
+![](NIFTII.png)  
 
+In Dicom we had only 30 slices. So the Axial and Sagittal weren't so useful
+
+![](DICOM.png) 
 ---
 
 ## Image Orientation
