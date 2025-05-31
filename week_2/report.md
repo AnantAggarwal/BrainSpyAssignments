@@ -47,7 +47,7 @@ I created slice views from all three anatomical planes:
 * **Coronal (front-back)**
 * **Sagittal (side-to-side)**
 
-Each plot was labeled and rendered using `matplotlib`. Here's an example of an axial slice:
+Each plot was labeled and rendered using `matplotlib`. Here's an example:
 
 ![Axial Screenshot](axial_view.png)
 
