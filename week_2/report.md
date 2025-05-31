@@ -3,14 +3,14 @@
 ## Overview
 
 This report outlines my approach to understanding and visualizing 3D medical imaging data stored in **NIfTI** (`.nii`) and **DICOM** (`.dcm`) formats. The task was performed in a Kaggle notebook environment, using Python libraries like `nibabel`, `pydicom`, `numpy`, and `matplotlib`. 
-## 📥 Data Sources
+## Data Sources
 
 * **NIfTI (.nii.gz)**: Sample Data uploaded in the assignments repo
 * **DICOM (.dcm)**: The OSIC Chest fibrosis progression competition on Kaggle.
 
 ---
 
-## 🔧 Tools Used
+## Tools Used
 
 * `nibabel`: For loading and exploring NIfTI files.
 * `pydicom`: For parsing individual DICOM slices and metadata.
@@ -19,7 +19,7 @@ This report outlines my approach to understanding and visualizing 3D medical ima
 
 ---
 
-## 📂 Workflow Summary
+## Workflow Summary
 
 ### 1. Loading Files
 
@@ -53,9 +53,9 @@ Each plot was labeled and rendered using `matplotlib`. Here's an example of an a
 
 ---
 
-## 🧭 Image Orientation
+## Image Orientation
 
-### 🧪 NIfTI Affine Matrix
+### NIfTI Affine Matrix
 
 ```text
 [[ 6.29074156e-01 -1.33072212e-02 -3.11387163e-02 -7.36054077e+01]
@@ -71,7 +71,7 @@ Each plot was labeled and rendered using `matplotlib`. Here's an example of an a
 * The last column (`[-73.61, -100.07, -119.99]`) is the world-space position of the first voxel.
 * Voxel sizes are roughly `0.63 mm`, with slight shearing due to small off-diagonal elements.
 
-### 📐 DICOM Orientation Tag
+### DICOM Orientation Tag
 
 ```text
 [1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000]
@@ -86,7 +86,7 @@ Each plot was labeled and rendered using `matplotlib`. Here's an example of an a
 * Since the third component is `0` in both vectors, this slice is aligned with the axial plane.
 * DICOM orientation is simpler to read but less descriptive than the affine in NIfTI.
 
-### 🔁 Summary
+### Summary
 
 | Feature              | NIfTI                         | DICOM                                   |
 | -------------------- | ----------------------------- | --------------------------------------- |
@@ -97,7 +97,7 @@ Each plot was labeled and rendered using `matplotlib`. Here's an example of an a
 
 ---
 
-## 🔍 NIfTI vs DICOM: Comparison
+## NIfTI vs DICOM: Comparison
 
 | Feature             | NIfTI                     | DICOM                                 |
 | ------------------- | ------------------------- | ------------------------------------- |
