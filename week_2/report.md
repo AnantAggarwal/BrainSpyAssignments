@@ -110,7 +110,7 @@ Each plot was labeled and rendered using `matplotlib`. Here's an example of an a
 
 ---
 
-## ⚙️ Observations & Challenges
+## Observations & Challenges
 
 ### Obsercations
 
