@@ -17,22 +17,15 @@ As outlined in the paper, there are primarily 3 approaches to this classificatio
 
 3D CNNs are very computationally intensive and will easily overfit on a small dataset such as this. Also, there aren't too many pre-trained models to try out transfer learning (I know there's 3D ResNet, but still!). 3D patch-based CNNs solve some of the computational problems, but I think it would still be difficult on a small dataset. Additionally, I'm unsure if it would work out on the limited GPU space. Also, it's just a complex approach to start with.  
 Coming to the 2D CNNs. They are computationally more efficient and also don't overfit as much since the number of slices is decent even in smaller datasets. However, most 2D approaches predict on every slice, which means they don't capture the spatial features very well. The approach outlined in the research paper solves this problem. They pass all the slices through a common CNN backbone, which means a feature vector is obtained corresponding to every slice (The Approach is kind of similar to RNN). The obtained feature vectors are combined through a weighted sum. The final feature vector is passed through the output layer.  
-You may have realised that this approach only allows us to use slices from a single plane. The paper points out that the model performs best with the Axial planes (Which was expected), and so I did all my experiment with the axial slices.
+You may have realised that this approach only allows us to use slices from a single plane. The paper points out that the model performs best with the Axial planes (Which was expected), and so I did all my experiment with the axial slices.  
+
+To be clear, since pre-processing was taking too long, I did all these experiments without pre-processing. However, the results haven't been very encouraging. This may show us the importance of pre-processing.
 
 ## Implementation
 I used PyTorch for all the experiments.
 ### The Code Structure
 #### Step 1: Traversed the dataset directory and added the `path` column to the CSV file.
 The path column contains the path to the corresponding scan. This made it convenient to implement the dataset class.
-```python
-import glob
-import os
-import pandas as pd
-
-base_dir = "path to the ADNI directory"
-for parent in glob.iglob(base_dir, "ADNI/**/**/**/*"):
-  
-```
 
 #### Step 2: Creating the dataset class:
 ```python
@@ -188,17 +181,35 @@ train_model(model, train_loader, val_loader, epochs=20, device=device)
 I tried to fine-tune it on 2 architectures, the VGG16(With Batch Normalisation) and Mobilenet. I used P100 for most of the experimentation.
 #### VGG 16
 VGG 16 is a heavy model. Requires very careful calibration so that everything fits in the GPU VRAM(16GB).
+Batch Size: 8  
+Optimiser: AdamW  
+Learning rate: 0.0001  
+weight_decay: 0.001  
+Epochs: 20  
+No. of layers frozen: 20  
+I could keep the batch size as 8 after applying the gradient-scaler optimisation. Without it, I could only keep the batch size to 2. However, this didn't work very well.
 
 #### MobileNet
+I thought that the VGG net may be too big for such small datasets. So I decided to try a smaller pre-trained network named MobileNet.
 Batch Size: 32  
 Optimiser: AdamW  
 Learning rate: 0.0001  
 weight_decay: 0.001  
 Epochs: 20  
 No. of layers frozen: 10  
-This model is lighter, so it allowed me to take a higher batch size. Otherwise, it was a complete failure, as I'll highlight in the next section.
+This model is lighter, so it allowed me to take a higher batch size. However, this didn't work well either.
 
 ## Results
+### VGG-16
+![](vgg16_training_graph.png)
+While the training accuracy is rising, the validation accuracy is just oscillating, probably because of overfitting. Indicates that the data is too less for this model. 
 ### MobileNet
 ![Training Loss, Accuracy, and Validation Loss vs No. of epochs](mobile_net_loss_and_acc_graph.png)  
 There's something very wrong with the validation accuracy. I couldn't find any issue with the validation code. I'm assuming that it's because of a lack of regularisation in MobileNet. But I'm looking for a better explanation; it shouldn't be this bad.
+
+# Conclusions
+The main conclusion I have drawn is that the data is too less for this approach. I am considering to try training simple CNN in on this model. However, I think I need to figure out something else. The poor performance may also be due to no pre-processing. So I am now working on pre-processing the entire dataset first.
+There are also some shortcomings with this approach. I feel that the fusion of slices through a weighted sum is too simple and may not capture all the patterns well. Also I think it would be ideal if we could somehow fuse features extracted from all the planes and not just axial. For this, maybe we can train 3 separate models on each plane and then try to fuse the feature vectors obtained using some operation like attention. I also feel intuitively that when going with the 2D approach, some kind of a sequential model will work better because it will allow us to capture more complex correlations.  
+
+
+** I'm sorry if this documentation seems a bit unprofessional. I've typed this all out by hand and didn't get much time to proofread. I am sure I would have committed many errors, here and there.**
